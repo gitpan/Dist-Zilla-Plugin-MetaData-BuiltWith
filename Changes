@@ -1,5 +1,11 @@
 Revision history for Dist-Zilla-Plugin-MetaData-BuiltWith
 
+0.01005020 2010-07-30 21:06:26 Pacific/Auckland
+          Skip 'perl' automatically when found in modules list. Can't depend on perl.pm.
+          Added 'uname' reporting feature. This should mostly work still, and only warn when its run
+            on a machine with no uname support and not publish uname data.
+          Added dump_config reporting support for MetaConfig
+
 0.01000216 2010-06-13 17:07:31 Pacific/Auckland
 
           Added a very overkill MetaData::BuiltWith::All module for those

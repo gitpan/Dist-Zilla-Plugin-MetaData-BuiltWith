@@ -20,12 +20,13 @@ my %module_build_args = (
     'Kent Fredric <kentnl@cpan.org>'
   ],
   'dist_name' => 'Dist-Zilla-Plugin-MetaData-BuiltWith',
-  'dist_version' => '0.01000216',
+  'dist_version' => '0.01005020',
   'license' => 'perl',
   'module_name' => 'Dist::Zilla::Plugin::MetaData::BuiltWith',
   'recommends' => {},
   'recursive_test_files' => 1,
   'requires' => {
+    'Carp' => '0',
     'Dist::Zilla::Role::MetaProvider' => '0',
     'Moose' => '0',
     'namespace::autoclean' => '0'

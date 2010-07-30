@@ -3,12 +3,15 @@ NAME
     things your distribution was built against
 
 VERSION
-    version 0.01000216
+    version 0.01005020
 
 SYNOPSIS
       [MetaData::BuiltWith]
       include = Some::Module::Thats::Not::In::Preq
       exclude = Some::Module::Youre::Ashamed::Of
+      show_uname = 1           ; default is 0
+      uname_call = uname        ; the default
+      uname_args = -s -r -m -p  ; the default is -a
 
 DESCRIPTION
     Often, distribution authors get module dependencies wrong. So in such
@@ -16,10 +19,10 @@ DESCRIPTION
     built with.
 
     Some would prefer to demand everyone install the same version as they
-    did, but thats also not always nessecary.
+    did, but that's also not always necessary.
 
-    Hopefully, the existance of the metadata provided by this module will
-    help users on thier end machines make intelligent choices about what
+    Hopefully, the existence of the metadata provided by this module will
+    help users on their end machines make intelligent choices about what
     modules to install in the event of a problem.
 
 METHODS
@@ -29,12 +32,12 @@ METHODS
 
   metadata
     This module scrapes together the name of all modules that exist in the
-    "Prereq" section that Dist::Zilla collects, and then works out what
+    ""Prereqs"" section that Dist::Zilla collects, and then works out what
     version of things you have, applies the various include/exclude rules,
     and ships that data back to Dist::Zilla via this method. See
-    Dist::Zilla::Role::MetaProvider for more details.
+    "Dist::Zilla"'s "MetaProvider" role for more details.
 
-EXAMPLE OUTPUT ( META.json )
+EXAMPLE OUTPUT ( "META.json" )
         "x_BuiltWith" : {
            "modules" : {
               "Dist::Zilla::Role::MetaProvider" : "4.101612",
@@ -49,7 +52,7 @@ EXAMPLE OUTPUT ( META.json )
         },
 
 AUTHOR
-      Kent Fredric <kentnl@cpan.org>
+    Kent Fredric <kentnl@cpan.org>
 
 COPYRIGHT AND LICENSE
     This software is copyright (c) 2010 by Kent Fredric <kentnl@cpan.org>.
