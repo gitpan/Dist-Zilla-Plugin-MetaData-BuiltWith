@@ -6,7 +6,7 @@ BEGIN {
   $Dist::Zilla::Plugin::MetaData::BuiltWith::All::AUTHORITY = 'cpan:KENTNL';
 }
 {
-  $Dist::Zilla::Plugin::MetaData::BuiltWith::All::VERSION = '0.03000000';
+  $Dist::Zilla::Plugin::MetaData::BuiltWith::All::VERSION = '0.02000101';
 }
 
 # ABSTRACT: Go overkill and report everything in all name-spaces.
@@ -16,14 +16,7 @@ use namespace::autoclean;
 extends 'Dist::Zilla::Plugin::MetaData::BuiltWith';
 
 
-
 has 'show_undef' => ( is => 'ro', isa => 'Bool', default => 0 );
-
-
-
-
-
-
 
 around dump_config => sub {
   my ( $orig, $self ) = @_;
@@ -113,7 +106,7 @@ Dist::Zilla::Plugin::MetaData::BuiltWith::All - Go overkill and report everythin
 
 =head1 VERSION
 
-version 0.03000000
+version 0.02000101
 
 =head1 SYNOPSIS
 
@@ -128,52 +121,6 @@ This further extends the verbosity of the information reported by the L<< C<Buil
 by recursively rooting around in the name-spaces and reporting every version of everything it finds.
 
 Only recommended for the most extreme of situations where you find your code breaking all over the show between different versions of things, or for personal amusement.
-
-=head1 OPTIONS
-
-=head2 show_undef
-
-Report Packages even if C<$VERSION> is undefined in the package.
-
-    show_undef = 1 ; default is 0
-
-=head2 exclude
-
-Specify modules to exclude from version reporting
-
-    exclude = Foo
-    exclude = Bar
-
-=head2 include
-
-Specify additional modules to include the version of
-
-    include = Foo
-    include = Bar
-
-=head2 show_config
-
-Report "interesting" values from C<%Config::Config>
-
-    show_config = 1 ; Boolean
-
-=head2 show_uname
-
-Report the output from C<uname>
-
-    show_uname = 1 ; Boolean
-
-=head2 uname_call
-
-Specify what the system C<uname> function is called
-
-    uname_call = uname ; String
-
-=head2 uname_args
-
-Specify arguments passed to the C<uname> call.
-
-    uname_args = -a ; String
 
 =head1 WARNING
 

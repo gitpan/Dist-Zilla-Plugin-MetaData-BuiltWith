@@ -6,13 +6,15 @@ BEGIN {
   $Dist::Zilla::Plugin::MetaData::BuiltWith::AUTHORITY = 'cpan:KENTNL';
 }
 {
-  $Dist::Zilla::Plugin::MetaData::BuiltWith::VERSION = '0.03000000';
+  $Dist::Zilla::Plugin::MetaData::BuiltWith::VERSION = '0.02000101';
 }
 
 # ABSTRACT: Report what versions of things your distribution was built against
 
 
-use Dist::Zilla::Util::EmulatePhase 0.01000101 qw( get_prereqs );
+use Dist::Zilla::Util::EmulatePhase;
+use Readonly;
+Readonly my $MIN_EMULATE_PHASE => '0.01000101';
 use Moose 2.0;
 use Class::Load qw( load_optional_class );
 use MooseX::Types::Moose (qw( ArrayRef Bool Str ));
@@ -21,7 +23,6 @@ with 'Dist::Zilla::Role::MetaProvider';
 
 
 sub mvp_multivalue_args { return qw( exclude include ) }
-
 
 has _exclude => (
   init_arg => 'exclude',
@@ -32,7 +33,6 @@ has _exclude => (
   handles  => { exclude => 'elements', },
 );
 
-
 has _include => (
   init_arg => 'include',
   is       => 'ro',
@@ -42,18 +42,9 @@ has _include => (
   handles  => { include => 'elements', },
 
 );
-
-
-has show_config => ( is => 'ro', isa => 'Bool', default => 0 );
-
-
 has show_uname => ( is => 'ro', isa => Bool, default => 0 );
-
-
-has uname_call => ( is => 'ro', isa => Str, default => 'uname' );
-
-
-has uname_args => ( is => 'ro', isa => Str, default => '-a' );
+has uname_call => ( is => 'ro', isa => Str,  default => 'uname' );
+has uname_args => ( is => 'ro', isa => Str,  default => '-a' );
 has _uname_args => (
   init_arg   => undef,
   is         => 'ro',
@@ -68,7 +59,7 @@ around dump_config => sub {
   my ( $orig, $self ) = @_;
 
   my $config = $self->$orig();
-  my $thisconfig = { show_uname => $self->show_uname, _stash_key => $self->_stash_key, show_config => $self->show_config };
+  my $thisconfig = { show_uname => $self->show_uname, _stash_key => $self->_stash_key };
 
   if ( $self->show_uname ) {
     $thisconfig->{'uname'} = {
@@ -87,21 +78,6 @@ around dump_config => sub {
   $config->{ q{} . __PACKAGE__ } = $thisconfig;
   return $config;
 };
-
-sub _config {
-  my $self = shift;
-  return () unless $self->show_config;
-  Class::Load::load_class('Config');
-  my @interesting = qw( git_describe git_commit_id git_commit_date myarchname gccversion osname osver );
-  my $interested  = {};
-  for my $key (@interesting) {
-    ## no critic (ProhibitPackageVars)
-    if ( defined $Config::Config{$key} and $Config::Config{$key} ne q{} ) {
-      $interested->{$key} = $Config::Config{$key};
-    }
-  }
-  return ( 'perl-config', $interested );
-}
 
 sub _uname {
   my $self = shift;
@@ -142,7 +118,10 @@ sub _get_prereq_modnames {
 
   my $modnames = {};
 
-  my $prereqs = get_prereqs( { zilla => $self->zilla } )->as_string_hash;
+  if ( defined $Dist::Zilla::Util::EmulatePhase::VERSION ) {
+    Dist::Zilla::Util::EmulatePhase->VERSION($MIN_EMULATE_PHASE);
+  }
+  my $prereqs = Dist::Zilla::Util::EmulatePhase::get_prereqs( { zilla => $self->zilla } )->as_string_hash;
   if ( not %{$prereqs} ) {
     $self->log(q{WARNING: No prereqs were found, probably a bug});
     return [];
@@ -242,7 +221,6 @@ sub metadata {
       perl     => { %{$^V} },
       platform => $^O,
       $self->_uname(),
-      $self->_config(),
     }
   };
 }
@@ -262,7 +240,7 @@ Dist::Zilla::Plugin::MetaData::BuiltWith - Report what versions of things your d
 
 =head1 VERSION
 
-version 0.03000000
+version 0.02000101
 
 =head1 SYNOPSIS
 
@@ -270,7 +248,6 @@ version 0.03000000
   include = Some::Module::Thats::Not::In::Preq
   exclude = Some::Module::Youre::Ashamed::Of
   show_uname = 1           ; default is 0
-  show_config = 1          ; default is 0
   uname_call = uname        ; the default
   uname_args = -s -r -m -p  ; the default is -a
 
@@ -285,46 +262,6 @@ but that's also not always necessary.
 Hopefully, the existence of the metadata provided by this module will help
 users on their end machines make intelligent choices about what modules to
 install in the event of a problem.
-
-=head1 OPTIONS
-
-=head2 exclude
-
-Specify modules to exclude from version reporting
-
-    exclude = Foo
-    exclude = Bar
-
-=head2 include
-
-Specify additional modules to include the version of
-
-    include = Foo
-    include = Bar
-
-=head2 show_config
-
-Report "interesting" values from C<%Config::Config>
-
-    show_config = 1 ; Boolean
-
-=head2 show_uname
-
-Report the output from C<uname>
-
-    show_uname = 1 ; Boolean
-
-=head2 uname_call
-
-Specify what the system C<uname> function is called
-
-    uname_call = uname ; String
-
-=head2 uname_args
-
-Specify arguments passed to the C<uname> call.
-
-    uname_args = -a ; String
 
 =head1 METHODS
 
